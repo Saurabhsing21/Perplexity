@@ -3,12 +3,15 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prisma": "^7.9.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@prisma/client": "^7.9.1",
+    "@prisma/extension-accelerate": "^3.0.1",
     "@tavily/core": "^0.7.6",
     "@types/express": "^5.0.6",
     "express": "^5.2.1",
