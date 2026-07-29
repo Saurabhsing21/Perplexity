@@ -1,18 +1,29 @@
-import express, { response } from "express";
+import express from "express";
 // To install: npm i @tavily/core
 import { tavily } from '@tavily/core';
-import { client } from './lib/openai'
+import { client } from './lib/openai';
+import { prisma } from './lib/prisma';
 import { SYSTEM_PROMPT } from "./prompt";
 import { PROMPT_TEMPLATE } from "./prompt";
 import { zodTextFormat } from "openai/helpers/zod";
-import { z } from "zod";
+import { email, z } from "zod";
 
 
 const clientt = tavily({ apiKey: process.env.TAVILY_API_KEY || '' });
-
-
 const app = express();
 app.use(express.json());
+
+// const res = await prisma.user.create({
+
+//     data: {
+//         email: "[EMAIL_ADDRESS]",
+//         name: "saurav",
+//         provider: "Github",
+
+//     }
+// }
+// )
+// console.log("User created successfully", res)
 
 
 app.post("/ask", async (req, res) => {
@@ -26,6 +37,9 @@ app.post("/ask", async (req, res) => {
         }
 
         console.log("[/ask] Received query:", query);
+
+
+
 
         // step2 checl for credit 
         // step3 check if we have  indexed the similer  results
