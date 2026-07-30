@@ -10,11 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.111.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "assistant-ui": "^0.0.108",
+    "init": "^0.1.2",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-router": "^8.3.0",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@types/node": "^24.13.2",
+    "@types/node": "^26.1.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
