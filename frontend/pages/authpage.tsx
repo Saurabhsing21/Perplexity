@@ -27,7 +27,7 @@ export default function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#f6f2ec] px-4 dark:bg-[#171615]">
       <div className="w-full max-w-md rounded-3xl border border-[#d7d0c5] bg-[#fcfbf8] p-8 shadow-lg dark:border-[#4a433b] dark:bg-[#23211f]">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-2xl bg-[#25211c] text-lg font-semibold text-[#f8f5f0] dark:bg-[#f5f2ed] dark:text-[#1b1713]">
+          <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-2xl bg-accent text-lg font-semibold text-white">
             P
           </div>
           <h1 className="font-display text-3xl tracking-tight text-[#25211c] dark:text-[#f5f2ed]">
@@ -43,7 +43,7 @@ export default function AuthPage() {
             type="button"
             disabled={loading !== null}
             onClick={() => handleSignIn("google")}
-            className="rounded-full border border-[#d7d0c5] bg-white px-4 py-3 text-sm font-medium text-[#25211c] transition-colors hover:bg-[#f5f1eb] disabled:opacity-50 dark:border-[#4a433b] dark:bg-[#2a2724] dark:text-[#f5f2ed] dark:hover:bg-[#332f2c]"
+            className="rounded-full border border-accent-border bg-white px-4 py-3 text-sm font-medium text-[#25211c] transition-colors hover:border-accent hover:bg-accent-muted disabled:opacity-50 dark:border-accent-border dark:bg-[#2a2724] dark:text-[#f5f2ed] dark:hover:bg-accent-muted"
           >
             {loading === "google" ? "Redirecting..." : "Continue with Google"}
           </button>
@@ -51,7 +51,7 @@ export default function AuthPage() {
             type="button"
             disabled={loading !== null}
             onClick={() => handleSignIn("github")}
-            className="rounded-full bg-[#25211c] px-4 py-3 text-sm font-medium text-[#f8f5f0] transition-colors hover:bg-[#171411] disabled:opacity-50 dark:bg-[#f5f2ed] dark:text-[#1b1713] dark:hover:bg-white"
+            className="rounded-full bg-accent px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
           >
             {loading === "github" ? "Redirecting..." : "Continue with GitHub"}
           </button>

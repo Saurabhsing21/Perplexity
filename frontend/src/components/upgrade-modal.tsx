@@ -44,9 +44,12 @@ export function UpgradeModal({
             href={PRICING_URL}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full bg-[#25211c] px-4 py-3 text-center text-sm font-medium text-[#f8f5f0] transition-colors hover:bg-[#171411] dark:bg-[#f5f2ed] dark:text-[#1b1713] dark:hover:bg-white"
+            className="rounded-2xl bg-accent px-4 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-accent-hover"
           >
-            View pricing & upgrade
+            View pricing &amp; upgrade
+            <span className="ml-2 rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+              Pro
+            </span>
           </a>
           <button
             type="button"

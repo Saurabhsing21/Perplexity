@@ -19,10 +19,24 @@ export type ConversationSummary = {
   messages: { content: string }[];
 };
 
-export type SourceItem = { title: string; url: string };
+export type { SourceItem } from "./sources";
+export {
+  domainFromUrl,
+  encodeSourcesMarker,
+  extractSourcesFromContent,
+  normalizeSourceItem,
+  preprocessCitationLinks,
+} from "./sources";
+
+import type { SourceItem } from "./sources";
+import { encodeSourcesMarker, normalizeSourceItem } from "./sources";
 
 export type AskStreamEvent =
   | { type: "delta"; text: string }
+  | { type: "thinking"; text: string }
+  | { type: "tool_start"; name: string; args?: unknown }
+  | { type: "tool_end"; name: string }
+  | { type: "status"; message: string }
   | { type: "sources"; items: SourceItem[] }
   | { type: "followups"; items: string[] }
   | { type: "done"; conversationId: string; creditsUsed: number; creditLimit: number }
@@ -139,19 +153,32 @@ export async function* askStream(
 
     for (const line of lines) {
       if (!line.trim()) continue;
-      yield JSON.parse(line) as AskStreamEvent;
+      const event = JSON.parse(line) as AskStreamEvent;
+      if (event.type === "sources") {
+        yield {
+          ...event,
+          items: event.items.map((s, i) => normalizeSourceItem(s, i + 1)),
+        };
+      } else {
+        yield event;
+      }
     }
   }
 
   if (buffer.trim()) {
-    yield JSON.parse(buffer) as AskStreamEvent;
+    const event = JSON.parse(buffer) as AskStreamEvent;
+    if (event.type === "sources") {
+      yield {
+        ...event,
+        items: event.items.map((s, i) => normalizeSourceItem(s, i + 1)),
+      };
+    } else {
+      yield event;
+    }
   }
 }
 
+/** @deprecated Prefer encodeSourcesMarker + SourcePanel; kept for tests/compat */
 export function formatSourcesMarkdown(sources: SourceItem[]): string {
-  if (sources.length === 0) return "";
-  const items = sources
-    .map((s, i) => `${i + 1}. [${s.title}](${s.url})`)
-    .join("\n");
-  return `\n\n### Sources\n${items}`;
+  return encodeSourcesMarker(sources);
 }

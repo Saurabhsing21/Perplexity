@@ -6,7 +6,7 @@ export const ALLOWED_MODELS: Record<string, string> = {
   sonar: "openai/gpt-4.1-mini",
   claude: "anthropic/claude-sonnet-4",
   "gpt-5": "openai/gpt-4o",
-  gemini: "google/gemini-2.0-flash-001",
+  gemini: "google/gemini-2.5-flash",
 };
 
 export function resolveModel(model?: string): string {

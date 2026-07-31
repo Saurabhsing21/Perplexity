@@ -1,29 +1,22 @@
 import { Router } from "express";
-import { z } from "zod";
-import { zodTextFormat } from "openai/helpers/zod";
 import { requireAuth } from "../middleware/auth.ts";
 import { requireCredits } from "../middleware/credits.ts";
-import { client } from "../lib/openai.ts";
 import { prisma } from "../lib/prisma.ts";
-import { webSearch } from "../lib/search.ts";
-import { SYSTEM_PROMPT } from "../prompt.ts";
+import { writeEvent } from "../lib/ask-utils.ts";
 import {
-  createFinalPrompt,
-  extractAnswerFromPartialJson,
-  getSearchDepth,
-  resolveModel,
-  writeEvent,
-} from "../lib/ask-utils.ts";
+  historyFromDbMessages,
+  runAgentQuery,
+  type NdjsonEvent,
+} from "../lib/agent-runner.ts";
 import { getOrCreateConversation } from "./conversations.ts";
 
 export const askRouter = Router();
 
-const QuestionResponseSchema = z.object({
-  followUpQuestions: z.array(z.string()),
-  answer: z.string(),
-});
-
 askRouter.post("/", requireAuth, requireCredits, async (req, res) => {
+  const abortController = new AbortController();
+  const onClose = () => abortController.abort();
+  req.on("close", onClose);
+
   try {
     const { query, model, conversationId, searchMode } = req.body;
 
@@ -32,11 +25,13 @@ askRouter.post("/", requireAuth, requireCredits, async (req, res) => {
     }
 
     const user = req.user!;
-    const resolvedModel = resolveModel(model);
-    const searchDepth = getSearchDepth(searchMode);
-
-    const searchResults = await webSearch(query, searchDepth);
     const conversation = await getOrCreateConversation(user.id, conversationId, query);
+
+    const priorMessages = await prisma.message.findMany({
+      where: { conversationId: conversation.id },
+      orderBy: { createdAt: "asc" },
+      select: { role: true, content: true },
+    });
 
     await prisma.message.create({
       data: {
@@ -49,62 +44,30 @@ askRouter.post("/", requireAuth, requireCredits, async (req, res) => {
     res.setHeader("Content-Type", "application/x-ndjson");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
+    res.flushHeaders?.();
 
-    const stream = await client.responses.create({
-      model: resolvedModel,
-      input: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: createFinalPrompt(query, searchResults) },
-      ],
-      text: {
-        format: zodTextFormat(QuestionResponseSchema, "question_response"),
-      },
-      temperature: 0.2,
-      stream: true,
-    });
-
-    let accumulated = "";
-    let sentAnswerLength = 0;
-
-    for await (const event of stream) {
-      if (event.type === "response.output_text.delta") {
-        accumulated += event.delta;
-        const currentAnswer = extractAnswerFromPartialJson(accumulated);
-        if (currentAnswer.length > sentAnswerLength) {
-          const delta = currentAnswer.slice(sentAnswerLength);
-          sentAnswerLength = currentAnswer.length;
-          writeEvent(res, { type: "delta", text: delta });
+    const result = await runAgentQuery({
+      query,
+      model,
+      searchMode,
+      history: historyFromDbMessages(priorMessages),
+      signal: abortController.signal,
+      onEvent: (event: NdjsonEvent) => {
+        if (!res.writableEnded) {
+          writeEvent(res, event);
         }
-      }
-    }
-
-    let parsed: z.infer<typeof QuestionResponseSchema>;
-    try {
-      parsed = QuestionResponseSchema.parse(JSON.parse(accumulated));
-    } catch {
-      parsed = {
-        answer: accumulated,
-        followUpQuestions: [],
-      };
-    }
-
-    if (parsed.answer.length > sentAnswerLength) {
-      writeEvent(res, { type: "delta", text: parsed.answer.slice(sentAnswerLength) });
-    }
-
-    writeEvent(res, {
-      type: "sources",
-      items: searchResults.map((r) => ({ title: r.title, url: r.url })),
+      },
     });
 
-    if (parsed.followUpQuestions.length > 0) {
-      writeEvent(res, { type: "followups", items: parsed.followUpQuestions });
-    }
+    const sourcesMarker =
+      result.sources.length > 0
+        ? `\n\n<!--SOURCES:${JSON.stringify(result.sources)}-->`
+        : "";
 
     await prisma.$transaction([
       prisma.message.create({
         data: {
-          content: parsed.answer,
+          content: `${result.answer}${sourcesMarker}`,
           role: "Assistant",
           conversationId: conversation.id,
         },
@@ -146,5 +109,7 @@ askRouter.post("/", requireAuth, requireCredits, async (req, res) => {
       message: error instanceof Error ? error.message : "Unknown error",
     });
     res.end();
+  } finally {
+    req.off("close", onClose);
   }
 });

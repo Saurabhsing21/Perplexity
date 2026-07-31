@@ -4,12 +4,16 @@ import { cn } from "@/lib/utils";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { CloneThreadShell } from "./clone-thread-shell";
 import { UpgradeModal } from "@/components/upgrade-modal";
+import { AgentStatus } from "@/components/agent-status";
+import { SourcePanel } from "@/components/sources/source-panel";
+import { SourcesProvider } from "@/components/sources/sources-context";
 import { useAuth } from "@/context/auth-context";
 import { useAppStore } from "@/store/app-store";
 import {
     askStream,
     CreditsExhaustedError,
-    formatSourcesMarkdown,
+    encodeSourcesMarker,
+    extractSourcesFromContent,
     getConversation,
     getMe,
     type SourceItem,
@@ -36,7 +40,6 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     CopyIcon,
-    ExternalLink,
     FileIcon,
     PencilIcon,
     Plus,
@@ -58,10 +61,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const composerPrimaryActionClassName =
-    "absolute inset-0 flex items-center justify-center rounded-full transition-all duration-200 ease-out";
+    "absolute inset-0 flex items-center justify-center rounded-2xl transition-all duration-200 ease-out";
 
 const composerPrimaryActionColorsClassName =
-    "bg-[#25211c] text-[#f8f5f0] hover:bg-[#171411] dark:bg-[#f5f2ed] dark:text-[#1b1713] dark:hover:bg-white";
+    "bg-accent text-white hover:bg-accent-hover dark:bg-accent dark:text-white dark:hover:bg-accent-hover";
 
 const messageActionClassName =
     "flex size-8 items-center justify-center rounded-full text-[#7a7268] transition-colors hover:bg-[#f1ece5] hover:text-[#1f1b17] dark:text-[#9d968d] dark:hover:bg-[#2a2724] dark:hover:text-[#f5f2ed]";
@@ -90,7 +93,24 @@ function PerplexityChat({ threadKey, initialMessages }: { threadKey: string; ini
     const setFollowUpQuestions = useAppStore((s) => s.setFollowUpQuestions);
     const setCredits = useAppStore((s) => s.setCredits);
     const openUpgradeModal = useAppStore((s) => s.openUpgradeModal);
+    const setAgentStatus = useAppStore((s) => s.setAgentStatus);
+    const setActiveTool = useAppStore((s) => s.setActiveTool);
+    const setStreamSources = useAppStore((s) => s.setStreamSources);
+    const clearAgentActivity = useAppStore((s) => s.clearAgentActivity);
+    const clearAgentStatus = useAppStore((s) => s.clearAgentStatus);
+    const agentStatus = useAppStore((s) => s.agentStatus);
+    const activeTool = useAppStore((s) => s.activeTool);
+    const streamSources = useAppStore((s) => s.streamSources);
     const [error, setError] = useState<string | null>(null);
+    const [thinking, setThinking] = useState("");
+
+    const sourcesContextValue = useMemo(
+        () => ({
+            streamSources,
+            getByIndex: (index: number) => streamSources.find((s) => s.index === index),
+        }),
+        [streamSources],
+    );
 
     const adapter = useMemo<ChatModelAdapter>(
         () => ({
@@ -112,7 +132,9 @@ function PerplexityChat({ threadKey, initialMessages }: { threadKey: string; ini
                 }
 
                 setError(null);
+                setThinking("");
                 setFollowUpQuestions([]);
+                clearAgentActivity();
 
                 try {
                     const token = await getAccessToken();
@@ -130,9 +152,34 @@ function PerplexityChat({ threadKey, initialMessages }: { threadKey: string; ini
                     })) {
                         if (event.type === "delta") {
                             text += event.text;
-                            yield { content: [{ type: "text" as const, text }] };
+                            yield {
+                                content: [
+                                    {
+                                        type: "text" as const,
+                                        text: text + encodeSourcesMarker(sources),
+                                    },
+                                ],
+                            };
+                        } else if (event.type === "thinking") {
+                            setThinking((prev) => prev + event.text);
+                        } else if (event.type === "tool_start") {
+                            setActiveTool(event.name);
+                        } else if (event.type === "tool_end") {
+                            setActiveTool(null);
+                            setAgentStatus(null);
+                        } else if (event.type === "status") {
+                            setAgentStatus(event.message);
                         } else if (event.type === "sources") {
                             sources = event.items;
+                            setStreamSources(event.items);
+                            yield {
+                                content: [
+                                    {
+                                        type: "text" as const,
+                                        text: text + encodeSourcesMarker(sources),
+                                    },
+                                ],
+                            };
                         } else if (event.type === "followups") {
                             setFollowUpQuestions(event.items);
                         } else if (event.type === "done") {
@@ -147,10 +194,12 @@ function PerplexityChat({ threadKey, initialMessages }: { threadKey: string; ini
                     }
 
                     if (sources.length > 0) {
-                        text += formatSourcesMarkdown(sources);
+                        text = text + encodeSourcesMarker(sources);
                         yield { content: [{ type: "text" as const, text }] };
                     }
+                    clearAgentStatus();
                 } catch (err) {
+                    clearAgentActivity();
                     if (err instanceof CreditsExhaustedError) {
                         openUpgradeModal({
                             creditsUsed: err.creditsUsed,
@@ -174,42 +223,70 @@ function PerplexityChat({ threadKey, initialMessages }: { threadKey: string; ini
                 }
             },
         }),
-        [conversationId, getAccessToken, model, navigate, openUpgradeModal, searchMode, setConversationId, setCredits, setFollowUpQuestions],
+        [
+            clearAgentActivity,
+            clearAgentStatus,
+            conversationId,
+            getAccessToken,
+            model,
+            navigate,
+            openUpgradeModal,
+            searchMode,
+            setActiveTool,
+            setAgentStatus,
+            setConversationId,
+            setCredits,
+            setFollowUpQuestions,
+            setStreamSources,
+        ],
     );
 
     const runtime = useLocalRuntime(adapter, { initialMessages });
 
     return (
         <AssistantRuntimeProvider runtime={runtime} key={threadKey}>
-            <CloneThreadShell
-                railClassName="border-[#E0D9CC] bg-[#EFEAE1] dark:border-[#332F2A] dark:bg-[#1D1B19]"
-                onNewThread={() => {}}
-            >
-                <ThreadPrimitive.Root
-                    className="flex h-full flex-col bg-[#f6f2ec] text-[#1f1b17] dark:bg-[#171615] dark:text-[#f5f2ed]"
-                    style={{ ["--thread-max-width" as string]: "40rem" }}
+            <SourcesProvider value={sourcesContextValue}>
+                <CloneThreadShell
+                    railClassName="border-[#E0D9CC] bg-[#EFEAE1] dark:border-[#332F2A] dark:bg-[#1D1B19]"
+                    onNewThread={() => {}}
                 >
-                    {error ? (
-                        <div className="bg-red-50 px-4 py-2 text-center text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
-                            {error}
-                        </div>
-                    ) : null}
+                    <ThreadPrimitive.Root
+                        className="flex h-full flex-col bg-[#f6f2ec] font-sans text-[#1f1b17] dark:bg-[#171615] dark:text-[#f5f2ed]"
+                        style={{ ["--thread-max-width" as string]: "42rem" }}
+                    >
+                        {error ? (
+                            <div className="bg-red-50 px-4 py-2 text-center text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+                                {error}
+                            </div>
+                        ) : null}
 
-                    <AuiIf condition={(s) => s.thread.isEmpty}>
-                        <EmptyState />
-                    </AuiIf>
+                        <AuiIf condition={(s) => s.thread.isEmpty}>
+                            <EmptyState />
+                        </AuiIf>
 
-                    <AuiIf condition={(s) => !s.thread.isEmpty}>
-                        <ThreadPrimitive.Viewport className="flex grow flex-col overflow-y-auto px-4 pt-12">
-                            <ThreadPrimitive.Messages>{() => <ChatMessage />}</ThreadPrimitive.Messages>
-                            <FollowUpQuestions />
-                            <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto w-full max-w-(--thread-max-width) bg-linear-to-b from-transparent via-[#f6f2ec]/85 to-[#f6f2ec] pt-6 pb-4 dark:via-[#171615]/85 dark:to-[#171615]">
-                                <Composer placeholder="Ask a follow-up..." />
-                            </ThreadPrimitive.ViewportFooter>
-                        </ThreadPrimitive.Viewport>
-                    </AuiIf>
-                </ThreadPrimitive.Root>
-            </CloneThreadShell>
+                        <AuiIf condition={(s) => !s.thread.isEmpty}>
+                            <ThreadPrimitive.Viewport className="flex grow flex-col overflow-y-auto px-4 pt-12">
+                                <ThreadPrimitive.Messages>{() => <ChatMessage />}</ThreadPrimitive.Messages>
+                                {thinking ? (
+                                    <details className="mx-auto mb-2 w-full max-w-(--thread-max-width) rounded-xl border border-[#e0d8cb] bg-[#f5f1eb]/80 px-3 py-2 text-xs text-[#6f675d] dark:border-[#3a342f] dark:bg-[#2a2724]/80 dark:text-[#a39c93]">
+                                        <summary className="cursor-pointer font-medium">Thinking...</summary>
+                                        <pre className="mt-2 whitespace-pre-wrap font-sans">{thinking}</pre>
+                                    </details>
+                                ) : null}
+                                <AgentStatus
+                                    status={agentStatus}
+                                    toolName={activeTool}
+                                    sources={streamSources}
+                                />
+                                <FollowUpQuestions />
+                                <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto w-full max-w-(--thread-max-width) bg-linear-to-b from-transparent via-[#f6f2ec]/85 to-[#f6f2ec] pt-6 pb-4 dark:via-[#171615]/85 dark:to-[#171615]">
+                                    <Composer placeholder="Ask a follow-up..." />
+                                </ThreadPrimitive.ViewportFooter>
+                            </ThreadPrimitive.Viewport>
+                        </AuiIf>
+                    </ThreadPrimitive.Root>
+                </CloneThreadShell>
+            </SourcesProvider>
         </AssistantRuntimeProvider>
     );
 }
@@ -311,7 +388,7 @@ const FollowUpQuestions: FC = () => {
                             input.focus();
                         }
                     }}
-                    className="rounded-full border border-[#d7d0c5] bg-[#fcfbf8] px-3 py-1.5 text-xs text-[#3a342d] transition-colors hover:bg-[#f2ede6] dark:border-[#3a342f] dark:bg-[#2a2724] dark:text-[#e6dfd5] dark:hover:bg-[#332f2c]"
+                    className="rounded-full border border-[#d7d0c5] bg-[#fcfbf8] px-3 py-1.5 text-xs text-[#3a342d] transition-colors hover:border-accent hover:bg-accent-muted hover:text-accent dark:border-[#3a342f] dark:bg-[#2a2724] dark:text-[#e6dfd5] dark:hover:border-accent dark:hover:bg-accent-muted"
                 >
                     {q}
                 </button>
@@ -325,6 +402,9 @@ const EmptyState: FC = () => (
         <div className="mx-auto w-full max-w-(--thread-max-width)">
             <p className="font-display mb-8 text-center text-5xl leading-none tracking-[-0.06em] text-[#25211c] sm:text-[3.1rem] dark:text-[#f5f2ed]">
                 perplexity
+                <span className="ml-2 align-middle rounded-md bg-accent px-1.5 py-0.5 text-[0.85rem] font-semibold tracking-normal text-white">
+                    pro
+                </span>
             </p>
             <Composer placeholder="Ask anything..." />
         </div>
@@ -332,7 +412,7 @@ const EmptyState: FC = () => (
 );
 
 const Composer: FC<{ placeholder: string }> = ({ placeholder }) => (
-    <ComposerPrimitive.Root className="group/composer mx-auto flex w-full max-w-(--thread-max-width) flex-col rounded-3xl border border-[#d7d0c5] bg-[#fcfbf8] shadow-[0_2px_4px_-2px_rgba(32,24,18,0.06),0_8px_24px_-12px_rgba(32,24,18,0.12)] transition-colors focus-within:border-[#b8b0a5] dark:border-[#4a433b] dark:bg-[#23211f] dark:shadow-[0_2px_8px_-4px_rgba(0,0,0,0.4),0_12px_32px_-16px_rgba(0,0,0,0.5)] dark:focus-within:border-[#6a6258]">
+    <ComposerPrimitive.Root className="group/composer mx-auto flex w-full max-w-(--thread-max-width) flex-col rounded-3xl border border-[#d7d0c5] bg-[#fcfbf8] shadow-[0_2px_4px_-2px_rgba(32,24,18,0.06),0_8px_24px_-12px_rgba(32,24,18,0.12)] transition-colors focus-within:border-accent/50 dark:border-[#4a433b] dark:bg-[#23211f] dark:shadow-[0_2px_8px_-4px_rgba(0,0,0,0.4),0_12px_32px_-16px_rgba(0,0,0,0.5)] dark:focus-within:border-accent/40">
         <AuiIf condition={(s) => s.composer.attachments.length > 0}>
             <div className="flex flex-wrap gap-2 px-4 pt-4">
                 <ComposerPrimitive.Attachments>{() => <AttachmentPreview removable />}</ComposerPrimitive.Attachments>
@@ -399,15 +479,15 @@ const SearchModePicker: FC = () => {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex h-8 items-center gap-1.5 rounded-full border border-[#e0d8cb] bg-[#f5f1eb] px-3 text-sm text-[#3a342d] transition-colors hover:bg-[#ede6dd] dark:border-[#3a342f] dark:bg-[#2a2724] dark:text-[#e6dfd5] dark:hover:bg-[#332f2c]">
-                <CurrentIcon className="size-3.5" />
+            <DropdownMenuTrigger className="flex h-8 items-center gap-1.5 rounded-full border border-accent-border bg-[#f5f1eb] px-3 text-sm text-[#3a342d] transition-colors hover:border-accent hover:bg-accent-muted dark:border-accent-border dark:bg-[#2a2724] dark:text-[#e6dfd5] dark:hover:bg-accent-muted">
+                <CurrentIcon className="size-3.5 text-accent" />
                 <span>{current.name}</span>
                 <ChevronDownIcon className="size-3.5 opacity-70" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="min-w-64">
                 {SEARCH_MODES.map(({ id, name, description, Icon }) => (
                     <DropdownMenuItem key={id} onClick={() => setSearchMode(id)} className="flex items-start gap-3">
-                        <span className="mt-0.5 flex size-4 items-center justify-center text-[#1f1b17] dark:text-[#f5f2ed]">
+                        <span className="mt-0.5 flex size-4 items-center justify-center text-accent">
                             {id === searchMode ? <CheckIcon /> : <Icon className="size-3.5" />}
                         </span>
                         <span className="flex flex-1 flex-col">
@@ -435,7 +515,7 @@ const ModelPicker: FC = () => {
             <DropdownMenuContent align="end" className="min-w-60">
                 {PERPLEXITY_MODELS.map((m) => (
                     <DropdownMenuItem key={m.id} onClick={() => setModel(m.id)} className="flex items-start gap-3">
-                        <span className="mt-0.5 flex size-4 items-center justify-center text-[#1f1b17] dark:text-[#f5f2ed]">
+                        <span className="mt-0.5 flex size-4 items-center justify-center text-accent">
                             {m.id === model ? <CheckIcon /> : null}
                         </span>
                         <span className="flex flex-1 flex-col">
@@ -476,15 +556,45 @@ const ChatMessage: FC = () => (
         </AuiIf>
 
         <AuiIf condition={(s) => s.message.role === "assistant"}>
+            <AssistantMessageBody />
+        </AuiIf>
+    </MessagePrimitive.Root>
+);
+
+const AssistantMessageBody: FC = () => {
+    const streamSources = useAppStore((s) => s.streamSources);
+    const isLast = useAuiState((s) => s.message.isLast);
+    const text = useAuiState((s) =>
+        s.message.content
+            .filter((c): c is { type: "text"; text: string } => c.type === "text")
+            .map((c) => c.text)
+            .join("\n"),
+    );
+
+    const { sources: messageSources } = useMemo(() => extractSourcesFromContent(text), [text]);
+    const sources = isLast && streamSources.length > 0 ? streamSources : messageSources;
+
+    const sourcesContextValue = useMemo(
+        () => ({
+            streamSources: sources,
+            getByIndex: (index: number) => sources.find((s) => s.index === index),
+        }),
+        [sources],
+    );
+
+    const showInlinePanel = sources.length > 0;
+
+    return (
+        <SourcesProvider value={sourcesContextValue}>
             <div className="flex items-start gap-3">
-                <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full border border-[#ddd5c9] bg-[#fffdfa] text-[#5b534a] dark:border-[#38332e] dark:bg-[#23211f] dark:text-[#d9d2c8]">
+                <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full border border-[#ddd5c9] bg-[#fffdfa] text-accent dark:border-[#38332e] dark:bg-[#23211f]">
                     <Search className="size-4" />
                 </div>
                 <div className="min-w-0 flex-1">
-                    <div className="prose prose-sm dark:prose-invert prose-li:my-1 prose-p:my-2 prose-ul:my-2 wrap-break-word text-[#2c2721] dark:text-[#ece7df]">
+                    {showInlinePanel ? <SourcePanel sources={sources} /> : null}
+                    <div className="prose prose-base dark:prose-invert max-w-none wrap-break-word font-serif text-[1.05rem] leading-7 text-[#2c2721] dark:text-[#ece7df] prose-headings:my-0 prose-p:my-0 prose-ul:my-0 prose-ol:my-0 prose-li:my-0">
                         <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
                     </div>
-                    <SourceChips />
                     <div className="mt-2 flex items-center gap-2">
                         <BranchPicker />
                         <ActionBarPrimitive.Root className="flex items-center gap-0.5 opacity-0 transition-opacity group-focus-within/message:opacity-100 group-hover/message:opacity-100">
@@ -503,43 +613,7 @@ const ChatMessage: FC = () => (
                     </div>
                 </div>
             </div>
-        </AuiIf>
-    </MessagePrimitive.Root>
-);
-
-const SourceChips: FC = () => {
-    const text = useAuiState((s) =>
-        s.message.content
-            .filter((c): c is { type: "text"; text: string } => c.type === "text")
-            .map((c) => c.text)
-            .join("\n"),
-    );
-
-    const sourcesSection = text.split("### Sources\n")[1];
-    if (!sourcesSection) return null;
-
-    const links = [...sourcesSection.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g)].map((m) => ({
-        title: m[1]!,
-        url: m[2]!,
-    }));
-
-    if (links.length === 0) return null;
-
-    return (
-        <div className="mt-3 flex flex-wrap gap-2">
-            {links.map((link) => (
-                <a
-                    key={link.url}
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 rounded-full border border-[#e0d8cb] bg-[#f5f1eb] px-2.5 py-1 text-xs text-[#3a342d] transition-colors hover:bg-[#ede6dd] dark:border-[#3a342f] dark:bg-[#2a2724] dark:text-[#e6dfd5]"
-                >
-                    <ExternalLink className="size-3" />
-                    {new URL(link.url, window.location.origin).hostname.replace("www.", "")}
-                </a>
-            ))}
-        </div>
+        </SourcesProvider>
     );
 };
 

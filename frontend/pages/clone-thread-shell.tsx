@@ -122,7 +122,7 @@ export const CloneThreadShell: React.FC<CloneThreadShellProps> = ({
           <div className="flex items-center justify-between px-2 py-1">
             {!collapsed && (
               <div className="flex items-center gap-2">
-                <span className="flex size-7 items-center justify-center rounded-lg bg-[#25211c] text-[#f8f5f0] font-semibold dark:bg-[#f5f2ed] dark:text-[#1b1713]">
+                <span className="flex size-7 items-center justify-center rounded-lg bg-accent text-white font-semibold">
                   P
                 </span>
                 <span className="font-display text-lg font-semibold tracking-tight text-[#25211c] dark:text-[#f5f2ed]">
@@ -143,11 +143,11 @@ export const CloneThreadShell: React.FC<CloneThreadShellProps> = ({
             type="button"
             onClick={handleNewThread}
             className={cn(
-              "flex items-center justify-center gap-2 rounded-full border border-[#d7d0c5] bg-[#fcfbf8] px-3 py-2 text-sm font-medium text-[#25211c] shadow-xs transition-all hover:bg-[#f3ece2] hover:shadow-sm dark:border-[#3d3731] dark:bg-[#252220] dark:text-[#f5f2ed] dark:hover:bg-[#2f2b27]",
+              "flex items-center justify-center gap-2 rounded-full border border-accent-border bg-[#fcfbf8] px-3 py-2 text-sm font-medium text-[#25211c] shadow-xs transition-all hover:border-accent hover:bg-accent-muted hover:text-accent hover:shadow-sm dark:border-accent-border dark:bg-[#252220] dark:text-[#f5f2ed] dark:hover:bg-accent-muted dark:hover:text-accent",
               collapsed && "size-10 rounded-full p-0",
             )}
           >
-            <Plus className="size-4 shrink-0" />
+            <Plus className="size-4 shrink-0 text-accent" />
             {!collapsed && <span>New Thread</span>}
           </button>
 
@@ -155,7 +155,7 @@ export const CloneThreadShell: React.FC<CloneThreadShellProps> = ({
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="flex items-center gap-3 rounded-xl bg-[#e4ded4] px-3 py-2 text-sm font-medium text-[#25211c] dark:bg-[#282522] dark:text-[#f5f2ed]"
+              className="flex items-center gap-3 rounded-xl bg-accent-muted px-3 py-2 text-sm font-medium text-accent"
             >
               <Compass className="size-4 shrink-0" />
               {!collapsed && <span>Home</span>}
@@ -202,6 +202,9 @@ export const CloneThreadShell: React.FC<CloneThreadShellProps> = ({
               ) : (
                 <span>
                   {creditsRemaining} of {creditLimit} queries left
+                  <span className="ml-2 rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
+                    Free
+                  </span>
                 </span>
               )}
             </div>
