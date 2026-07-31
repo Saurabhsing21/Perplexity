@@ -93,9 +93,11 @@ bun run build
 
 - Root directory: `frontend`
 - Build: `bun run build` (or `npm run build`)
-- Output: `dist`
+- Output: `dist` (set automatically via `frontend/vercel.json`)
 - Framework: Vite
 - Env: set all `VITE_*` in project settings
+
+> If you see *"No Output Directory named build found"*, set **Root Directory** to `frontend` and redeploy. The repo includes `frontend/vercel.json` with `"outputDirectory": "dist"`.
 
 **Netlify**
 
