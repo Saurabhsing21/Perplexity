@@ -11,7 +11,8 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:reset": "bun run scripts/reset-data.ts",
-    "vercel-build": "bun run db:generate && bun build vercel-entry.ts --outfile api/index.js --target=node --format=cjs --packages=external && cp -r prompts api/prompts"
+  "vercel-build": "bun run db:generate && bun build vercel-entry.ts --outfile api/index.js --target=node --format=cjs --packages=external && cp -r prompts api/prompts",
+    "vercel-dev": "bun run vercel-build && npx vercel dev"
   },
   "devDependencies": {
     "@types/bun": "latest",

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth.ts";
 import { prisma } from "../db/prisma.ts";
+import { routeParam } from "../lib/route-param.ts";
 
 export const conversationsRouter = Router();
 
@@ -40,7 +41,7 @@ conversationsRouter.post("/", requireAuth, async (req, res) => {
 });
 
 conversationsRouter.get("/:id", requireAuth, async (req, res) => {
-  const id = String(req.params.id);
+  const id = routeParam(req.params.id);
   const conversation = await prisma.conversation.findFirst({
     where: { id, userId: req.user!.id },
     include: {
@@ -56,7 +57,7 @@ conversationsRouter.get("/:id", requireAuth, async (req, res) => {
 });
 
 conversationsRouter.delete("/:id", requireAuth, async (req, res) => {
-  const id = String(req.params.id);
+  const id = routeParam(req.params.id);
   const existing = await prisma.conversation.findFirst({
     where: { id, userId: req.user!.id },
   });
