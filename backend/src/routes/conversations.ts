@@ -40,8 +40,9 @@ conversationsRouter.post("/", requireAuth, async (req, res) => {
 });
 
 conversationsRouter.get("/:id", requireAuth, async (req, res) => {
+  const id = String(req.params.id);
   const conversation = await prisma.conversation.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
+    where: { id, userId: req.user!.id },
     include: {
       messages: { orderBy: { createdAt: "asc" } },
     },
@@ -55,8 +56,9 @@ conversationsRouter.get("/:id", requireAuth, async (req, res) => {
 });
 
 conversationsRouter.delete("/:id", requireAuth, async (req, res) => {
+  const id = String(req.params.id);
   const existing = await prisma.conversation.findFirst({
-    where: { id: req.params.id, userId: req.user!.id },
+    where: { id, userId: req.user!.id },
   });
 
   if (!existing) {

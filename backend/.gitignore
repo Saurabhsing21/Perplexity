@@ -175,3 +175,4 @@ dist
 .DS_Store
 
 /lib/generated/prisma
+.vercel

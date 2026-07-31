@@ -604,9 +604,12 @@ cd backend && bun run db:reset
 
 ## Deploy
 
-Backend and frontend deploy as **two independent apps** (no Docker).
+Backend and frontend deploy as **two Vercel projects** from the same repo. See **[docs/DEPLOY.md](docs/DEPLOY.md)** for full setup.
 
-→ **[docs/DEPLOY.md](docs/DEPLOY.md)**
+| Project | Root directory | `vercel.json` |
+|---------|----------------|---------------|
+| Frontend | `frontend` | Vite → `dist/` |
+| Backend | `backend` | Express → `api/index.js` |
 
 ---
 

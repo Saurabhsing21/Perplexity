@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -28,10 +28,23 @@ Write the answer as markdown following the format rules above — use \`##\` hea
 
 let cachedPromptTemplate: string | null = null;
 
+function resolvePromptPath(): string {
+  const candidates = [
+    join(__dirname, "prompts", "prompt.md"),
+    join(__dirname, "..", "prompts", "prompt.md"),
+    join(__dirname, "..", "..", "prompts", "prompt.md"),
+  ];
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+
+  throw new Error("prompt.md not found");
+}
+
 function loadPromptTemplate(): string {
   if (cachedPromptTemplate) return cachedPromptTemplate;
-  const path = join(__dirname, "..", "..", "prompts", "prompt.md");
-  cachedPromptTemplate = readFileSync(path, "utf8");
+  cachedPromptTemplate = readFileSync(resolvePromptPath(), "utf8");
   return cachedPromptTemplate;
 }
 
