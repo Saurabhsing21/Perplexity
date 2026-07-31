@@ -1,6 +1,6 @@
 # Agent Loop
 
-> Internal architecture of the Perplexity clone agent — from HTTP request to streamed, cited answer.
+> Internal architecture of the Lumina agent — from HTTP request to streamed, cited answer.
 
 ← [Project README](../README.md) · [Deployment](DEPLOY.md)
 
@@ -249,7 +249,7 @@ The loop exits when the model produces a final text answer (not `toolUse`).
 
 ## The runner (`agent-runner.ts`)
 
-Perplexity-specific wiring on top of the generic loop.
+Lumina-specific wiring on top of the generic loop.
 
 ### Context assembly
 
@@ -590,4 +590,4 @@ cd backend && bun run db:reset
 ```
 
 The **loop** orchestrates LLM ↔ tool turns until `stopReason === "stop"`.
-The **runner** translates that into Perplexity-style streaming UX with sources, citations, and follow-ups.
+The **runner** translates that into Lumina-style streaming UX with sources, citations, and follow-ups.

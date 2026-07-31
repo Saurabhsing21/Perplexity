@@ -121,7 +121,7 @@ function createSourceRegistry() {
 }
 
 /**
- * Run the Perplexity agent loop for a user query and map events to NDJSON.
+ * Run the Lumina agent loop for a user query and map events to NDJSON.
  * The model decides whether to call web_search; the agent loop executes tools.
  */
 export async function runAgentQuery(options: {

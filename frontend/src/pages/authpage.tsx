@@ -28,10 +28,10 @@ export default function AuthPage() {
       <div className="w-full max-w-md rounded-3xl border border-[#d7d0c5] bg-[#fcfbf8] p-8 shadow-lg dark:border-[#4a433b] dark:bg-[#23211f]">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-2xl bg-accent text-lg font-semibold text-white">
-            P
+            L
           </div>
           <h1 className="font-display text-3xl tracking-tight text-[#25211c] dark:text-[#f5f2ed]">
-            perplexity
+            lumina
           </h1>
           <p className="mt-2 text-sm text-[#6f675d] dark:text-[#a39c93]">
             Sign in to start searching with AI

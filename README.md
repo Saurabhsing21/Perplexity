@@ -1,4 +1,4 @@
-# Perplexity Clone
+# Lumina
 
 > A production-style AI search assistant — tool-calling agent, live web search, cited markdown answers, and streaming UI.
 
@@ -178,7 +178,7 @@ Deep dive → **[docs/AGENT_LOOP.md](docs/AGENT_LOOP.md)**
 ## Project structure
 
 ```
-perplexity/
+lumina/
 ├── backend/
 │   ├── src/
 │   │   ├── agent/              # Loop, runner, models, prompt loader
@@ -222,7 +222,7 @@ export function getSystemPrompt(): string {
 ```markdown
 <!-- backend/prompts/prompt.md (excerpt) -->
 # Goal
-You are Perplexity, a helpful search assistant…
+You are Lumina, a helpful search assistant…
 
 ## Format Rules
 - Begin with a short summary (no header first)
@@ -404,7 +404,7 @@ export function historyFromDbMessages(messages) {
 ### Install & run
 
 ```bash
-git clone <repo-url> perplexity && cd perplexity
+git clone <repo-url> lumina && cd lumina
 
 # ── Backend ──────────────────────────────────────────
 cd backend

@@ -8,7 +8,7 @@ type UpgradeModalProps = {
   onClose: () => void;
 };
 
-const PRICING_URL = import.meta.env.VITE_PRICING_URL ?? "https://perplexity.ai/pro";
+const PRICING_URL = import.meta.env.VITE_PRICING_URL ?? "/pricing";
 
 export function UpgradeModal({
   open,

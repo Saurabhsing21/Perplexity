@@ -75,15 +75,15 @@ const SEARCH_MODES = [
     { id: "labs", name: "Labs", description: "Apps, slides, and dashboards", Icon: Sparkles },
 ];
 
-const PERPLEXITY_MODELS = [
+const CHAT_MODELS = [
     { id: "best", name: "Best", description: "Auto-pick the best model" },
-    { id: "sonar", name: "Sonar", description: "Perplexity's fast model" },
+    { id: "sonar", name: "Sonar", description: "Lumina's fast model" },
     { id: "claude", name: "Claude 4.5 Sonnet", description: "Anthropic" },
     { id: "gpt-5", name: "GPT-5", description: "OpenAI" },
     { id: "gemini", name: "Gemini 3 Pro", description: "Google" },
 ];
 
-function PerplexityChat({ threadKey, initialMessages }: { threadKey: string; initialMessages: ThreadMessageLike[] }) {
+function LuminaChat({ threadKey, initialMessages }: { threadKey: string; initialMessages: ThreadMessageLike[] }) {
     const navigate = useNavigate();
     const { getAccessToken } = useAuth();
     const conversationId = useAppStore((s) => s.conversationId);
@@ -291,7 +291,7 @@ function PerplexityChat({ threadKey, initialMessages }: { threadKey: string; ini
     );
 }
 
-export const Perplexity: FC = () => {
+export const Lumina: FC = () => {
     const { id } = useParams();
     const { getAccessToken } = useAuth();
     const setConversationId = useAppStore((s) => s.setConversationId);
@@ -351,7 +351,7 @@ export const Perplexity: FC = () => {
 
     return (
         <>
-            <PerplexityChat threadKey={id ?? "home"} initialMessages={initialMessages} />
+            <LuminaChat threadKey={id ?? "home"} initialMessages={initialMessages} />
             <UpgradeModal
                 open={showUpgradeModal}
                 creditsUsed={upgradePayload?.creditsUsed ?? 0}
@@ -401,7 +401,7 @@ const EmptyState: FC = () => (
     <div className="flex h-full flex-col justify-center px-4">
         <div className="mx-auto w-full max-w-(--thread-max-width)">
             <p className="font-display mb-8 text-center text-5xl leading-none tracking-[-0.06em] text-[#25211c] sm:text-[3.1rem] dark:text-[#f5f2ed]">
-                perplexity
+                lumina
                 <span className="ml-2 align-middle rounded-md bg-accent px-1.5 py-0.5 text-[0.85rem] font-semibold tracking-normal text-white">
                     pro
                 </span>
@@ -504,7 +504,7 @@ const SearchModePicker: FC = () => {
 const ModelPicker: FC = () => {
     const model = useAppStore((s) => s.model);
     const setModel = useAppStore((s) => s.setModel);
-    const current = PERPLEXITY_MODELS.find((m) => m.id === model) ?? PERPLEXITY_MODELS[0]!;
+    const current = CHAT_MODELS.find((m) => m.id === model) ?? CHAT_MODELS[0]!;
 
     return (
         <DropdownMenu>
@@ -513,7 +513,7 @@ const ModelPicker: FC = () => {
                 <ChevronDownIcon className="size-4 opacity-70" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-60">
-                {PERPLEXITY_MODELS.map((m) => (
+                {CHAT_MODELS.map((m) => (
                     <DropdownMenuItem key={m.id} onClick={() => setModel(m.id)} className="flex items-start gap-3">
                         <span className="mt-0.5 flex size-4 items-center justify-center text-accent">
                             {m.id === model ? <CheckIcon /> : null}

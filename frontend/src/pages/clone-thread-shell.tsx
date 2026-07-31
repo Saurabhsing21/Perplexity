@@ -123,10 +123,10 @@ export const CloneThreadShell: React.FC<CloneThreadShellProps> = ({
             {!collapsed && (
               <div className="flex items-center gap-2">
                 <span className="flex size-7 items-center justify-center rounded-lg bg-accent text-white font-semibold">
-                  P
+                  L
                 </span>
                 <span className="font-display text-lg font-semibold tracking-tight text-[#25211c] dark:text-[#f5f2ed]">
-                  Perplexity
+                  Lumina
                 </span>
               </div>
             )}

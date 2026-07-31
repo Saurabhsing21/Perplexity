@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import { AuthProvider } from "./context/auth-context";
 import { ProtectedRoute } from "./components/protected-route";
-import { Perplexity } from "@/pages/home";
+import { Lumina } from "@/pages/home";
 import AuthPage from "@/pages/authpage";
 import AuthCallbackPage from "@/pages/auth-callback";
 
@@ -14,7 +14,7 @@ function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <Perplexity />
+                <Lumina />
               </ProtectedRoute>
             }
           />
@@ -22,7 +22,7 @@ function App() {
             path="/thread/:id"
             element={
               <ProtectedRoute>
-                <Perplexity />
+                <Lumina />
               </ProtectedRoute>
             }
           />

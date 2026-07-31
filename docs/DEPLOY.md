@@ -8,8 +8,8 @@ Deploy as **two Vercel projects** from the same GitHub repo.
 
 | Project | Root directory | URL example |
 |---------|----------------|-------------|
-| **Frontend** | `frontend` | `https://perplexity-web.vercel.app` |
-| **Backend** | `backend` | `https://perplexity-api.vercel.app` |
+| **Frontend** | `frontend` | `https://lumina-web.vercel.app` |
+| **Backend** | `backend` | `https://lumina-api.vercel.app` |
 
 The repo includes `frontend/vercel.json` and `backend/vercel.json` so output directories and builds are preconfigured.
 
