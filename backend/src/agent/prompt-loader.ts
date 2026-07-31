@@ -30,7 +30,7 @@ let cachedPromptTemplate: string | null = null;
 
 function loadPromptTemplate(): string {
   if (cachedPromptTemplate) return cachedPromptTemplate;
-  const path = join(__dirname, "..", "prompt.md");
+  const path = join(__dirname, "..", "..", "prompts", "prompt.md");
   cachedPromptTemplate = readFileSync(path, "utf8");
   return cachedPromptTemplate;
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { Request, Response } from "express";
-import { requireCredits } from "../middleware/credits.ts";
+import { requireCredits } from "../src/middleware/credits.ts";
 
 function createMockRes() {
   const res = {

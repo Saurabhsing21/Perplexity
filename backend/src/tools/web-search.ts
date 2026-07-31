@@ -1,6 +1,6 @@
 import { Type } from "@earendil-works/pi-ai";
-import { webSearch, type SearchResult } from "../search.ts";
-import type { AgentTool, AgentToolResult } from "../types.ts";
+import { webSearch, type SearchResult } from "../search/search.ts";
+import type { AgentTool, AgentToolResult } from "../agent/types.ts";
 
 export type WebSearchDetails = {
   results: SearchResult[];

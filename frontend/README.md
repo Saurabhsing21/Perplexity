@@ -1,23 +1,29 @@
-# Perplexity Clone Frontend
-
-Vite + React Perplexity-style UI.
-
-## Setup
+# Frontend
 
 ```bash
 bun install
 cp .env.example .env
-# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY
-```
-
-## Run
-
-```bash
+# fill VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, VITE_API_URL
 bun run dev
 ```
 
-App runs at `http://localhost:5173`. Requires the backend at `VITE_API_URL` (default `http://localhost:3000`).
+## Scripts
 
-## Auth
+| Script | Description |
+|--------|-------------|
+| `bun run dev` | Vite dev server |
+| `bun run build` | Production build → `dist/` |
+| `bun run preview` | Preview `dist/` |
+| `bun run test` | Vitest |
 
-OAuth via Supabase (Google + GitHub). Configure redirect URL: `http://localhost:5173/auth/callback`.
+## Layout
+
+```
+src/pages/        home, auth, shell
+src/components/   sources, markdown, UI
+src/lib/          api, sources helpers
+src/store/        zustand
+src/context/      auth
+```
+
+Deploy as a static SPA separately from the backend — see [../docs/DEPLOY.md](../docs/DEPLOY.md).

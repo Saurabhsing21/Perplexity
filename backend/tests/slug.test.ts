@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { slugify } from "../lib/slug.ts";
+import { slugify } from "../src/db/slug.ts";
 
 describe("slugify", () => {
   it("lowercases and replaces spaces with hyphens", () => {

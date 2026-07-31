@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Navigate } from "react-router";
-import { useAuth } from "../src/context/auth-context";
+import { useAuth } from "@/context/auth-context";
 
 export default function AuthPage() {
   const { session, signInWithGoogle, signInWithGithub } = useAuth();

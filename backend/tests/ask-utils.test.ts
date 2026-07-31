@@ -4,7 +4,7 @@ import {
   extractAnswerFromPartialJson,
   getSearchDepth,
   resolveModel,
-} from "../lib/ask-utils.ts";
+} from "../src/ask/ask-utils.ts";
 
 describe("ask-utils", () => {
   it("resolveModel returns mapped model or default", () => {

@@ -1,5 +1,5 @@
 import type { Model } from "@earendil-works/pi-ai";
-import { ALLOWED_MODELS } from "./ask-utils.ts";
+import { ALLOWED_MODELS } from "../ask/ask-utils.ts";
 import { models } from "./stream-fn.ts";
 
 /** Frontend picker id → OpenRouter model id */

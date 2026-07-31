@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import { upsertUserFromSupabase } from "../lib/user-sync.ts";
+import { upsertUserFromSupabase } from "../db/user-sync.ts";
 
 type SupabaseJwtUser = {
   id: string;

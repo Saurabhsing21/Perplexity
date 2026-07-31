@@ -4,7 +4,7 @@ import { PROMPT_TEMPLATE } from "../prompt.ts";
 export const ALLOWED_MODELS: Record<string, string> = {
   best: "openai/gpt-4.1-mini",
   sonar: "openai/gpt-4.1-mini",
-  claude: "anthropic/claude-sonnet-4",
+  // claude: "anthropic/claude-sonnet-4",
   "gpt-5": "openai/gpt-4o",
   gemini: "google/gemini-2.5-flash",
 };

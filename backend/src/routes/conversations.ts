@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth.ts";
-import { prisma } from "../lib/prisma.ts";
+import { prisma } from "../db/prisma.ts";
 
 export const conversationsRouter = Router();
 
-import { slugify } from "../lib/slug.ts";
+import { slugify } from "../db/slug.ts";
 conversationsRouter.get("/", requireAuth, async (req, res) => {
   const conversations = await prisma.conversation.findMany({
     where: { userId: req.user!.id },

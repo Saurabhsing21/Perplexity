@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import type { Server } from "node:http";
-import { createApp } from "../app.ts";
+import { createApp } from "../src/app.ts";
 
 let server: Server;
 let baseUrl: string;

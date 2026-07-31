@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { extractFollowUps } from "../lib/prompt-loader.ts";
-import { historyFromDbMessages, MAX_HISTORY_MESSAGES } from "../lib/agent-runner.ts";
-import { getAgentModel } from "../lib/models.ts";
+import { extractFollowUps } from "../src/agent/prompt-loader.ts";
+import { historyFromDbMessages, MAX_HISTORY_MESSAGES } from "../src/agent/agent-runner.ts";
+import { getAgentModel } from "../src/agent/models.ts";
 
 describe("agent-runner helpers", () => {
   it("historyFromDbMessages maps User/Assistant roles", () => {

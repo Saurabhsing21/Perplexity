@@ -1,4 +1,4 @@
-import type { AuthProvider } from "../prisma/generated/client.ts";
+import type { AuthProvider } from "../../prisma/generated/client.ts";
 import { prisma } from "./prisma.ts";
 
 type SupabaseUser = {

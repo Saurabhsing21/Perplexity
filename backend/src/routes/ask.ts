@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth.ts";
 import { requireCredits } from "../middleware/credits.ts";
-import { prisma } from "../lib/prisma.ts";
-import { writeEvent } from "../lib/ask-utils.ts";
+import { prisma } from "../db/prisma.ts";
+import { writeEvent } from "../ask/ask-utils.ts";
 import {
   historyFromDbMessages,
   runAgentQuery,
   type NdjsonEvent,
-} from "../lib/agent-runner.ts";
+} from "../agent/agent-runner.ts";
 import { getOrCreateConversation } from "./conversations.ts";
 
 export const askRouter = Router();

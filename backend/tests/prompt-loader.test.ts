@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { extractFollowUps, getSystemPrompt } from "../lib/prompt-loader.ts";
-import { PROMPT_TEMPLATE } from "../prompt.ts";
-import { createFinalPrompt } from "../lib/ask-utils.ts";
+import { extractFollowUps, getSystemPrompt } from "../src/agent/prompt-loader.ts";
+import { PROMPT_TEMPLATE } from "../src/prompt.ts";
+import { createFinalPrompt } from "../src/ask/ask-utils.ts";
 
 describe("prompt-loader", () => {
   it("builds static system prompt with date and tool instructions", () => {

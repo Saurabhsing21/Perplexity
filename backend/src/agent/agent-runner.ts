@@ -1,6 +1,6 @@
 import type { AssistantMessage, Message } from "@earendil-works/pi-ai";
 import { agentLoop } from "./agent-loop.ts";
-import { getSearchDepth } from "./ask-utils.ts";
+import { getSearchDepth } from "../ask/ask-utils.ts";
 import { getAgentModel } from "./models.ts";
 import { extractFollowUps, getSystemPrompt } from "./prompt-loader.ts";
 import { getDefaultStreamFn } from "./stream-fn.ts";
@@ -8,13 +8,13 @@ import {
   createWebSearchTool,
   domainFromUrl,
   type RegisteredSource,
-} from "./tools/web-search.ts";
+} from "../tools/web-search.ts";
 import type {
   AgentContext,
   AgentLoopConfig,
   AgentMessage,
 } from "./types.ts";
-import type { SearchResult } from "./search.ts";
+import type { SearchResult } from "../search/search.ts";
 
 export type SourceItem = {
   index: number;

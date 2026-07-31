@@ -1,0 +1,14 @@
+{
+  "name": "perplexity",
+  "private": true,
+  "scripts": {
+    "dev:backend": "bun run --cwd backend dev",
+    "dev:frontend": "bun run --cwd frontend dev",
+    "build": "bun run build:backend && bun run build:frontend",
+    "build:backend": "bun run --cwd backend build",
+    "build:frontend": "bun run --cwd frontend build",
+    "test": "bun run --cwd backend test && bun run --cwd frontend test",
+    "start:backend": "bun run --cwd backend start",
+    "preview:frontend": "bun run --cwd frontend preview"
+  }
+}

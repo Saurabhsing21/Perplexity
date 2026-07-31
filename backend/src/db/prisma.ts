@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "../prisma/generated/client.ts";
+import { PrismaClient } from "../../prisma/generated/client.ts";
 import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 
