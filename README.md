@@ -16,6 +16,18 @@
 
 **Docs:** [Agent Loop](docs/AGENT_LOOP.md) · [Deployment](docs/DEPLOY.md)
 
+## Demo
+
+<iframe
+  width="100%"
+  height="480"
+  src="https://www.youtube.com/embed/-yP0UTrq3FI?autoplay=1&mute=1&loop=1&playlist=-yP0UTrq3FI"
+  title="Lumina demo"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
+
 ---
 
 ## Table of contents
@@ -38,138 +50,13 @@
 
 High-level view of how a user query becomes a streamed, cited answer.
 
-```mermaid
-flowchart LR
-    subgraph Client["Frontend · React"]
-        UI["Chat UI"]
-        Stream["askStream()"]
-        Sources["SourcePanel + Citations"]
-    end
-
-    subgraph API["Backend · Express"]
-        Auth["Auth middleware"]
-        Ask["POST /ask"]
-        Agent["runAgentQuery()"]
-        DB["Prisma · Postgres"]
-    end
-
-    subgraph Services["External"]
-        SB["Supabase Auth"]
-        OR["OpenRouter LLM"]
-        TV["Tavily Search"]
-    end
-
-    UI --> Stream
-    Stream -->|Bearer JWT| Auth
-    Auth --> SB
-    Auth --> Ask
-    Ask --> DB
-    Ask --> Agent
-    Agent --> OR
-    Agent --> TV
-    Agent -->|NDJSON stream| Stream
-    Stream --> Sources
-    Ask -->|persist| DB
-```
-
-### Request flow (sequence)
-
-```mermaid
-sequenceDiagram
-    actor User
-    participant FE as Frontend
-    participant API as /ask route
-    participant DB as PostgreSQL
-    participant Agent as agent-runner
-    participant LLM as OpenRouter
-    participant Search as Tavily
-
-    User->>FE: Submit query
-    FE->>API: POST /ask + JWT
-    API->>DB: Load history (≤20 msgs)
-    API->>DB: Save user message
-    API->>Agent: runAgentQuery()
-
-    loop Agent turns
-        Agent->>LLM: Stream with system prompt + history
-        alt Model calls web_search
-            LLM-->>Agent: tool_call
-            Agent->>Search: Tavily query
-            Search-->>Agent: Results [1][2]…
-            Agent-->>FE: sources event
-            Agent->>LLM: Tool results
-        end
-        LLM-->>Agent: Final answer (streaming)
-        Agent-->>FE: delta events
-    end
-
-    Agent-->>FE: followups
-    API->>DB: Save answer + sources marker
-    API-->>FE: done
-    FE-->>User: Render answer + citations
-```
+![Architecture diagram](frontend/public/Architecture%20diagram.png)
 
 ---
 
 ## Agent loop
 
 The agent is **tool-first**: the LLM decides when to search. There is no forced pre-search.
-
-```mermaid
-stateDiagram-v2
-    [*] --> LoadContext: User query arrives
-
-    LoadContext --> LLMTurn: system prompt + history + tools
-    LLMTurn --> ToolCall: stopReason = toolUse
-    LLMTurn --> FinalAnswer: stopReason = stop
-
-    ToolCall --> WebSearch: web_search
-    WebSearch --> RegisterSources: Number & dedupe URLs
-    RegisterSources --> LLMTurn: Tool result → model
-
-    FinalAnswer --> ExtractFollowUps: Strip FOLLOWUP_QUESTIONS
-    ExtractFollowUps --> Persist: Save to DB
-    Persist --> [*]
-```
-
-### Layered architecture
-
-```mermaid
-flowchart TB
-    subgraph Route["routes/ask.ts"]
-        R1["requireAuth + requireCredits"]
-        R2["Load / save messages"]
-        R3["NDJSON response writer"]
-    end
-
-    subgraph Runner["agent/agent-runner.ts"]
-        RN1["getSystemPrompt()"]
-        RN2["createWebSearchTool()"]
-        RN3["Source registry"]
-        RN4["Event → NDJSON mapper"]
-    end
-
-    subgraph Loop["agent/agent-loop.ts"]
-        L1["agentLoop()"]
-        L2["streamAssistantResponse()"]
-        L3["executeToolCalls()"]
-    end
-
-    subgraph Prompt["prompts/prompt.md"]
-        P1["Format rules · citations"]
-        P2["Query-type overrides"]
-    end
-
-    R1 --> R2 --> RN1
-    RN1 --> P1
-    RN1 --> L1
-    RN2 --> L1
-    L1 --> L2
-    L2 -->|toolUse| L3
-    L3 --> RN3
-    L2 --> RN4
-    RN4 --> R3
-```
 
 Deep dive → **[docs/AGENT_LOOP.md](docs/AGENT_LOOP.md)**
 

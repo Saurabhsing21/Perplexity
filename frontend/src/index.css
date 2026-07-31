@@ -5,10 +5,10 @@
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
   --font-display: "Inter", system-ui, sans-serif;
-  --color-accent: #6b4ce6;
-  --color-accent-hover: #5a3dd4;
-  --color-accent-muted: color-mix(in srgb, #6b4ce6 18%, transparent);
-  --color-accent-border: color-mix(in srgb, #6b4ce6 35%, transparent);
+  --color-accent: #20808d;
+  --color-accent-hover: #1a6b76;
+  --color-accent-muted: color-mix(in srgb, #20808d 18%, transparent);
+  --color-accent-border: color-mix(in srgb, #20808d 35%, transparent);
 }
 
 :root {
