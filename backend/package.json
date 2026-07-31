@@ -9,7 +9,8 @@
     "build": "bun build src/index.ts --outdir=dist --target=bun",
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:reset": "bun run scripts/reset-data.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
