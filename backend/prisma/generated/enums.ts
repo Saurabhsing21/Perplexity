@@ -23,3 +23,11 @@ export const AuthProvider = {
 } as const
 
 export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
+
+
+export const Plan = {
+  Free: 'Free',
+  Pro: 'Pro'
+} as const
+
+export type Plan = (typeof Plan)[keyof typeof Plan]

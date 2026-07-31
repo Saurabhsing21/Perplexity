@@ -5,11 +5,13 @@
   "scripts": {
     "start": "bun run index.ts",
     "dev": "bun --watch index.ts",
+    "test": "bun test",
     "db:generate": "prisma generate",
     "db:push": "prisma db push"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
     "prisma": "^7.9.1"
   },
   "peerDependencies": {
@@ -20,9 +22,12 @@
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "@prisma/extension-accelerate": "^3.0.1",
+    "@supabase/supabase-js": "^2.111.0",
     "@tavily/core": "^0.7.6",
     "@types/express": "^5.0.6",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
+    "jose": "^6.2.5",
     "openai": "^7.1.0",
     "pg": "^8.22.0",
     "types": "^0.1.1",

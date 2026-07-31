@@ -4,29 +4,37 @@ generator client {
 	engineType = "client"
 	runtime = "bun"
 }
+
 datasource db {
   provider = "postgresql"
 }
 
-// Defining the schema
-
 model User {
   id            String         @id @default(uuid())
-  email         String
+  email         String         @unique
   provider      AuthProvider
-  supbaseid     String
+  supabaseId    String         @unique
   name          String
+  creditsUsed   Int            @default(0)
+  creditLimit   Int            @default(10)
+  plan          Plan           @default(Free)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   conversations Conversation[]
+  creditUsages  CreditUsage[]
 }
 
 model Conversation {
-  id       String    @id @default(uuid())
-  title    String?
-  slug     String
-  userId   String
-  messages Message[]
+  id        String    @id @default(uuid())
+  title     String?
+  slug      String
+  userId    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id])
+  @@index([userId])
 }
 
 model Message {
@@ -34,8 +42,20 @@ model Message {
   content        String
   role           MessageRole
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
   createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+model CreditUsage {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 enum MessageRole {
@@ -46,4 +66,9 @@ enum MessageRole {
 enum AuthProvider {
   Github
   Google
+}
+
+enum Plan {
+  Free
+  Pro
 }

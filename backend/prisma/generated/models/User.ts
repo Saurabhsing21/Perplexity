@@ -20,52 +20,110 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  creditsUsed: number | null
+  creditLimit: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  creditsUsed: number | null
+  creditLimit: number | null
 }
 
 export type UserMinAggregateOutputType = {
   id: string | null
   email: string | null
   provider: $Enums.AuthProvider | null
+  supabaseId: string | null
   name: string | null
+  creditsUsed: number | null
+  creditLimit: number | null
+  plan: $Enums.Plan | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
   id: string | null
   email: string | null
   provider: $Enums.AuthProvider | null
+  supabaseId: string | null
   name: string | null
+  creditsUsed: number | null
+  creditLimit: number | null
+  plan: $Enums.Plan | null
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type UserCountAggregateOutputType = {
   id: number
   email: number
   provider: number
+  supabaseId: number
   name: number
+  creditsUsed: number
+  creditLimit: number
+  plan: number
+  createdAt: number
+  updatedAt: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  creditsUsed?: true
+  creditLimit?: true
+}
+
+export type UserSumAggregateInputType = {
+  creditsUsed?: true
+  creditLimit?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
   email?: true
   provider?: true
+  supabaseId?: true
   name?: true
+  creditsUsed?: true
+  creditLimit?: true
+  plan?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type UserMaxAggregateInputType = {
   id?: true
   email?: true
   provider?: true
+  supabaseId?: true
   name?: true
+  creditsUsed?: true
+  creditLimit?: true
+  plan?: true
+  createdAt?: true
+  updatedAt?: true
 }
 
 export type UserCountAggregateInputType = {
   id?: true
   email?: true
   provider?: true
+  supabaseId?: true
   name?: true
+  creditsUsed?: true
+  creditLimit?: true
+  plan?: true
+  createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -107,6 +165,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -137,6 +207,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -145,8 +217,16 @@ export type UserGroupByOutputType = {
   id: string
   email: string
   provider: $Enums.AuthProvider
+  supabaseId: string
   name: string
+  creditsUsed: number
+  creditLimit: number
+  plan: $Enums.Plan
+  createdAt: Date
+  updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -173,37 +253,66 @@ export type UserWhereInput = {
   id?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
   provider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFilter<"User"> | string
   name?: Prisma.StringFilter<"User"> | string
+  creditsUsed?: Prisma.IntFilter<"User"> | number
+  creditLimit?: Prisma.IntFilter<"User"> | number
+  plan?: Prisma.EnumPlanFilter<"User"> | $Enums.Plan
+  createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   conversations?: Prisma.ConversationListRelationFilter
+  creditUsages?: Prisma.CreditUsageListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  supabaseId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  creditsUsed?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   conversations?: Prisma.ConversationOrderByRelationAggregateInput
+  creditUsages?: Prisma.CreditUsageOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  email?: string
+  supabaseId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
-  email?: Prisma.StringFilter<"User"> | string
   provider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   name?: Prisma.StringFilter<"User"> | string
+  creditsUsed?: Prisma.IntFilter<"User"> | number
+  creditLimit?: Prisma.IntFilter<"User"> | number
+  plan?: Prisma.EnumPlanFilter<"User"> | $Enums.Plan
+  createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   conversations?: Prisma.ConversationListRelationFilter
-}, "id">
+  creditUsages?: Prisma.CreditUsageListRelationFilter
+}, "id" | "email" | "supabaseId">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  supabaseId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  creditsUsed?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -213,81 +322,161 @@ export type UserScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   provider?: Prisma.EnumAuthProviderWithAggregatesFilter<"User"> | $Enums.AuthProvider
+  supabaseId?: Prisma.StringWithAggregatesFilter<"User"> | string
   name?: Prisma.StringWithAggregatesFilter<"User"> | string
+  creditsUsed?: Prisma.IntWithAggregatesFilter<"User"> | number
+  creditLimit?: Prisma.IntWithAggregatesFilter<"User"> | number
+  plan?: Prisma.EnumPlanWithAggregatesFilter<"User"> | $Enums.Plan
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
 
 export type UserCreateInput = {
   id?: string
   email: string
   provider: $Enums.AuthProvider
+  supabaseId: string
   name: string
+  creditsUsed?: number
+  creditLimit?: number
+  plan?: $Enums.Plan
+  createdAt?: Date | string
+  updatedAt?: Date | string
   conversations?: Prisma.ConversationCreateNestedManyWithoutUserInput
+  creditUsages?: Prisma.CreditUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
   email: string
   provider: $Enums.AuthProvider
+  supabaseId: string
   name: string
+  creditsUsed?: number
+  creditLimit?: number
+  plan?: $Enums.Plan
+  createdAt?: Date | string
+  updatedAt?: Date | string
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+  creditUsages?: Prisma.CreditUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   conversations?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+  creditUsages?: Prisma.CreditUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
+  creditUsages?: Prisma.CreditUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
   email: string
   provider: $Enums.AuthProvider
+  supabaseId: string
   name: string
+  creditsUsed?: number
+  creditLimit?: number
+  plan?: $Enums.Plan
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  supabaseId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  creditsUsed?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  creditsUsed?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  supabaseId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  creditsUsed?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   provider?: Prisma.SortOrder
+  supabaseId?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  creditsUsed?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  creditsUsed?: Prisma.SortOrder
+  creditLimit?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -301,6 +490,22 @@ export type StringFieldUpdateOperationsInput = {
 
 export type EnumAuthProviderFieldUpdateOperationsInput = {
   set?: $Enums.AuthProvider
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type EnumPlanFieldUpdateOperationsInput = {
+  set?: $Enums.Plan
+}
+
+export type DateTimeFieldUpdateOperationsInput = {
+  set?: Date | string
 }
 
 export type UserCreateNestedOneWithoutConversationsInput = {
@@ -317,18 +522,46 @@ export type UserUpdateOneRequiredWithoutConversationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutConversationsInput, Prisma.UserUpdateWithoutConversationsInput>, Prisma.UserUncheckedUpdateWithoutConversationsInput>
 }
 
+export type UserCreateNestedOneWithoutCreditUsagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreditUsagesInput, Prisma.UserUncheckedCreateWithoutCreditUsagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreditUsagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreditUsagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreditUsagesInput, Prisma.UserUncheckedCreateWithoutCreditUsagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreditUsagesInput
+  upsert?: Prisma.UserUpsertWithoutCreditUsagesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreditUsagesInput, Prisma.UserUpdateWithoutCreditUsagesInput>, Prisma.UserUncheckedUpdateWithoutCreditUsagesInput>
+}
+
 export type UserCreateWithoutConversationsInput = {
   id?: string
   email: string
   provider: $Enums.AuthProvider
+  supabaseId: string
   name: string
+  creditsUsed?: number
+  creditLimit?: number
+  plan?: $Enums.Plan
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  creditUsages?: Prisma.CreditUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutConversationsInput = {
   id?: string
   email: string
   provider: $Enums.AuthProvider
+  supabaseId: string
   name: string
+  creditsUsed?: number
+  creditLimit?: number
+  plan?: $Enums.Plan
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  creditUsages?: Prisma.CreditUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutConversationsInput = {
@@ -351,14 +584,100 @@ export type UserUpdateWithoutConversationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditUsages?: Prisma.CreditUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  creditUsages?: Prisma.CreditUsageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCreditUsagesInput = {
+  id?: string
+  email: string
+  provider: $Enums.AuthProvider
+  supabaseId: string
+  name: string
+  creditsUsed?: number
+  creditLimit?: number
+  plan?: $Enums.Plan
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  conversations?: Prisma.ConversationCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreditUsagesInput = {
+  id?: string
+  email: string
+  provider: $Enums.AuthProvider
+  supabaseId: string
+  name: string
+  creditsUsed?: number
+  creditLimit?: number
+  plan?: $Enums.Plan
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreditUsagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreditUsagesInput, Prisma.UserUncheckedCreateWithoutCreditUsagesInput>
+}
+
+export type UserUpsertWithoutCreditUsagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreditUsagesInput, Prisma.UserUncheckedUpdateWithoutCreditUsagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreditUsagesInput, Prisma.UserUncheckedCreateWithoutCreditUsagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreditUsagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreditUsagesInput, Prisma.UserUncheckedUpdateWithoutCreditUsagesInput>
+}
+
+export type UserUpdateWithoutCreditUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversations?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreditUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  supabaseId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  creditsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  creditLimit?: Prisma.IntFieldUpdateOperationsInput | number
+  plan?: Prisma.EnumPlanFieldUpdateOperationsInput | $Enums.Plan
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -368,10 +687,12 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
 
 export type UserCountOutputType = {
   conversations: number
+  creditUsages: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversations?: boolean | UserCountOutputTypeCountConversationsArgs
+  creditUsages?: boolean | UserCountOutputTypeCountCreditUsagesArgs
 }
 
 /**
@@ -391,13 +712,27 @@ export type UserCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.ConversationWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreditUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CreditUsageWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
   provider?: boolean
+  supabaseId?: boolean
   name?: boolean
+  creditsUsed?: boolean
+  creditLimit?: boolean
+  plan?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
   conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
+  creditUsages?: boolean | Prisma.User$creditUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -405,26 +740,45 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   email?: boolean
   provider?: boolean
+  supabaseId?: boolean
   name?: boolean
+  creditsUsed?: boolean
+  creditLimit?: boolean
+  plan?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   email?: boolean
   provider?: boolean
+  supabaseId?: boolean
   name?: boolean
+  creditsUsed?: boolean
+  creditLimit?: boolean
+  plan?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
   id?: boolean
   email?: boolean
   provider?: boolean
+  supabaseId?: boolean
   name?: boolean
+  creditsUsed?: boolean
+  creditLimit?: boolean
+  plan?: boolean
+  createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "provider" | "name", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "provider" | "supabaseId" | "name" | "creditsUsed" | "creditLimit" | "plan" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
+  creditUsages?: boolean | Prisma.User$creditUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -434,12 +788,19 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     conversations: Prisma.$ConversationPayload<ExtArgs>[]
+    creditUsages: Prisma.$CreditUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     email: string
     provider: $Enums.AuthProvider
+    supabaseId: string
     name: string
+    creditsUsed: number
+    creditLimit: number
+    plan: $Enums.Plan
+    createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -835,6 +1196,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   conversations<T extends Prisma.User$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  creditUsages<T extends Prisma.User$creditUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$creditUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CreditUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -867,7 +1229,13 @@ export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly provider: Prisma.FieldRef<"User", 'AuthProvider'>
+  readonly supabaseId: Prisma.FieldRef<"User", 'String'>
   readonly name: Prisma.FieldRef<"User", 'String'>
+  readonly creditsUsed: Prisma.FieldRef<"User", 'Int'>
+  readonly creditLimit: Prisma.FieldRef<"User", 'Int'>
+  readonly plan: Prisma.FieldRef<"User", 'Plan'>
+  readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 
@@ -1282,6 +1650,30 @@ export type User$conversationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+}
+
+/**
+ * User.creditUsages
+ */
+export type User$creditUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CreditUsage
+   */
+  select?: Prisma.CreditUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CreditUsage
+   */
+  omit?: Prisma.CreditUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CreditUsageInclude<ExtArgs> | null
+  where?: Prisma.CreditUsageWhereInput
+  orderBy?: Prisma.CreditUsageOrderByWithRelationInput | Prisma.CreditUsageOrderByWithRelationInput[]
+  cursor?: Prisma.CreditUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CreditUsageScalarFieldEnum | Prisma.CreditUsageScalarFieldEnum[]
 }
 
 /**
