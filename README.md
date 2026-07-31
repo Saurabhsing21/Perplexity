@@ -18,15 +18,7 @@
 
 ## Demo
 
-<iframe
-  width="100%"
-  height="480"
-  src="https://www.youtube.com/embed/-yP0UTrq3FI?autoplay=1&mute=1&loop=1&playlist=-yP0UTrq3FI"
-  title="Lumina demo"
-  frameborder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-></iframe>
+[![Lumina demo](https://img.youtube.com/vi/-yP0UTrq3FI/maxresdefault.jpg)](https://www.youtube.com/watch?v=-yP0UTrq3FI&autoplay=1)
 
 ---
 
