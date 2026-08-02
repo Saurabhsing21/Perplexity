@@ -1,40 +1,46 @@
+<div align="center">
+
 # Lumina
 
-> A production-style AI search assistant — tool-calling agent, live web search, cited markdown answers, and streaming UI.
+**A production-style AI search assistant — tool-calling agent, live web search, cited markdown answers, streaming UI.**
 
-**Author:** [Saurabhsing21](https://github.com/Saurabhsing21)  
-**License:** [MIT](LICENSE)
+[![Bun](https://img.shields.io/badge/runtime-Bun-fbf0df)](https://bun.sh)
+[![Express](https://img.shields.io/badge/backend-Express%205-black)](https://expressjs.com)
+[![React](https://img.shields.io/badge/frontend-React%2019-61dafb)](https://react.dev)
+[![Postgres](https://img.shields.io/badge/db-PostgreSQL%20%2B%20Prisma-336791)](https://www.prisma.io)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-| Layer      | Technology                                      |
-|------------|-------------------------------------------------|
-| Runtime    | Bun, Express 5                                  |
-| Agent      | `@earendil-works/pi-ai` + OpenRouter            |
-| Search     | Tavily API                                      |
-| Database   | PostgreSQL + Prisma 7                           |
-| Auth       | Supabase (JWT)                                    |
-| Frontend   | React 19, Vite 8, assistant-ui, Tailwind CSS 4  |
+**Author:** [Saurabhsing21](https://github.com/Saurabhsing21)
 
-**Docs:** [Agent Loop](docs/AGENT_LOOP.md) · [Deployment](docs/DEPLOY.md)
+[Demo](#demo) • [Features](#features) • [System Overview](#system-overview) • [Quick Start](#quick-start) • [API](#api-reference) • [Docs](#documentation-index)
 
-## Demo
-
-[![Lumina demo](https://img.youtube.com/vi/-yP0UTrq3FI/maxresdefault.jpg)](https://www.youtube.com/watch?v=-yP0UTrq3FI&autoplay=1)
+</div>
 
 ---
 
-## Table of contents
+## Demo
 
-1. [System overview](#system-overview)
-2. [Agent loop](#agent-loop)
-3. [Project structure](#project-structure)
-4. [Core components](#core-components)
-5. [Dependencies](#dependencies)
-6. [Quick start](#quick-start)
-7. [Commands](#commands)
-8. [Configuration](#configuration)
-9. [API reference](#api-reference)
-10. [Database](#database)
-11. [Customization](#customization)
+<div align="center">
+
+<video autoplay muted loop playsinline width="100%">
+  <source src="assets/Perplexity.mp4" type="video/mp4">
+</video>
+
+</div>
+
+*Autoplays muted (browser policy). [Full demo on YouTube](https://www.youtube.com/watch?v=-yP0UTrq3FI).*
+
+---
+
+## Features
+
+- ✅ **Tool-first agent loop** — the LLM decides *when* to search, no forced pre-search on every query
+- ✅ **Live web search** via Tavily, with `basic`/`advanced` depth modes (`search` vs `research`)
+- ✅ **Streamed, cited answers** — NDJSON streaming, inline `[1][2]` citations tied to real sources
+- ✅ **Conversation memory** — last 20 messages sent to the model, source markers stripped before it sees them
+- ✅ **Multi-model routing** — swap between GPT-4.1, Claude Sonnet 4, Gemini 2.5 Flash via OpenRouter
+- ✅ **Auth + credits** — Supabase JWT auth, per-user credit limits enforced server-side
+- ✅ **Follow-up suggestions** — model proposes next questions at the end of each answer
 
 ---
 
@@ -194,7 +200,7 @@ export async function* askStream(token, { query, model, searchMode, conversation
 ```
 
 | Event       | Purpose                          |
-|-------------|----------------------------------|
+|-------------|-----------------------------------|
 | `delta`     | Answer text chunk                |
 | `sources`   | `{ index, title, url, domain }[]`|
 | `followups` | Suggested next questions         |
@@ -277,12 +283,14 @@ export function historyFromDbMessages(messages) {
 
 - [Bun](https://bun.sh) — backend runtime
 - Node 18+ — frontend tooling
+- [Git LFS](https://git-lfs.com) — demo video in README (`git lfs install` once per machine)
 - Supabase project (auth + Postgres)
 - OpenRouter + Tavily API keys
 
 ### Install & run
 
 ```bash
+git lfs install
 git clone <repo-url> lumina && cd lumina
 
 # ── Backend ──────────────────────────────────────────
