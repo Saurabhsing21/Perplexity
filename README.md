@@ -16,9 +16,8 @@
 
 </div>
 
----
 
-## Demo
+
 
 <div align="center">
 
@@ -26,19 +25,18 @@
 
 </div>
 
-*Loops automatically in the README. [Watch with audio on YouTube](https://www.youtube.com/watch?v=-yP0UTrq3FI) · [Download full MP4](assets/Perplexity.mp4)*
 
 ---
 
 ## Features
 
-- ✅ **Tool-first agent loop** — the LLM decides *when* to search, no forced pre-search on every query
-- ✅ **Live web search** via Tavily, with `basic`/`advanced` depth modes (`search` vs `research`)
-- ✅ **Streamed, cited answers** — NDJSON streaming, inline `[1][2]` citations tied to real sources
-- ✅ **Conversation memory** — last 20 messages sent to the model, source markers stripped before it sees them
-- ✅ **Multi-model routing** — swap between GPT-4.1, Claude Sonnet 4, Gemini 2.5 Flash via OpenRouter
-- ✅ **Auth + credits** — Supabase JWT auth, per-user credit limits enforced server-side
-- ✅ **Follow-up suggestions** — model proposes next questions at the end of each answer
+-  **Tool-first agent loop** — the LLM decides *when* to search, no forced pre-search on every query
+-  **Live web search** via Tavily, with `basic`/`advanced` depth modes (`search` vs `research`)
+-  **Streamed, cited answers** — NDJSON streaming, inline `[1][2]` citations tied to real sources
+-  **Conversation memory** — last 20 messages sent to the model, source markers stripped before it sees them
+-  **Multi-model routing** — swap between GPT-4.1, Claude Sonnet 4, Gemini 2.5 Flash via OpenRouter
+-  **Auth + credits** — Supabase JWT auth, per-user credit limits enforced server-side
+-  **Follow-up suggestions** — model proposes next questions at the end of each answer
 
 ---
 
