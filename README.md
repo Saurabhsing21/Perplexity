@@ -22,13 +22,11 @@
 
 <div align="center">
 
-<video autoplay muted loop playsinline width="100%">
-  <source src="assets/Perplexity.mp4" type="video/mp4">
-</video>
+![Lumina demo](assets/Perplexity.demo.gif)
 
 </div>
 
-*Autoplays muted (browser policy). [Full demo on YouTube](https://www.youtube.com/watch?v=-yP0UTrq3FI).*
+*Loops automatically in the README. [Watch with audio on YouTube](https://www.youtube.com/watch?v=-yP0UTrq3FI) · [Download full MP4](assets/Perplexity.mp4)*
 
 ---
 
